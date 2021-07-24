@@ -1,7 +1,7 @@
 let message;
 // @CONFIG
 // @name test
-// @description Test komudu
+// @description Test commnd
 // @aliases test1,test2
 // @channelRequirement text
 // @permissions MANAGE_MESSAGES,MANAGE_GUILD
