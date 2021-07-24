@@ -1,17 +1,23 @@
 let instance = null;
 const fs = require("fs");
 function errLoadCommand(name, code) {
-    console.error("Cannot load "+name+"! Error code: "+code);
+    console.error("Cannot load " + name + "! Error code: " + code);
 }
 module.exports = {
     new: new (class Base {
         constructor() {
-            this.commands = [];
+            this.resetCommands();
+            this.dir = "";
             instance = this;
         }
+        resetCommands() {
+            this.commands = [];
+        }
         addCommand(fileName) {
+            if(fileName === "CommandEvaller.js") return false;
+            const dir = this.dir.replace(/\\/g, "/");
             try {
-                let text = fs.readFileSync("./commands/"+fileName).toString().split("\n").map(i=> {
+                let text = fs.readFileSync(dir+"/commands/"+fileName).toString().split("\n").map(i=> {
                     if(!i.startsWith("// ")) return i;
                     let end = null;
                     for(let a=0;a<i.length;a++) {
@@ -25,7 +31,7 @@ module.exports = {
                 }).join("\n");
                 if(!text.includes("//@CONFIG")) {
                     errLoadCommand(fileName, 1);
-                    return;
+                    return false;
                 }
                 let endLine;
                 text.split("\n").forEach((val, key) => {
@@ -33,8 +39,8 @@ module.exports = {
                         endLine = key;
                 });
                 if(endLine === undefined) {
-                    errLoadCommand(fileName, 3);
-                    return;
+                    errLoadCommand(fileName, 2);
+                    return false;
                 }
                 let code = text.split("\n").slice(endLine+1).join("\n");
                 text = text.split("\n").slice(0, endLine);
@@ -58,21 +64,30 @@ module.exports = {
                         lines[i.key] = Array.isArray(lines[i.key]) ? i.value.split(",") : i.value;
                 });
                 lines["execute"] = function(message, args) {
-                    let codeEval = `let client = require("././index").getClient();
+                    let codeEval = `let client = require("${dir}/index").getClient();
 let message = client.channels.cache.get("${message.channel.id}").messages.cache.get("${message.id}");
 let args = ${JSON.stringify(args)};
 ${code}`;
-                    eval(codeEval);
+                    require(dir+"/commands/CommandEvaller")(codeEval);
                 }
+                lines["file"] = fileName;
                 if(!lines["name"]) {
+                    errLoadCommand(fileName, 3);
+                    return false;
+                }
+                if(this.commands[lines["name"]]) {
                     errLoadCommand(fileName, 4);
-                    return;
+                    return false;
                 }
                 this.commands[lines["name"]] = lines;
+                return true;
             } catch(e) {
                 console.error(e)
                 errLoadCommand(fileName, 5);
             }
+        }
+        removeCommand(name) {
+            delete this.commands[name];
         }
     })(),
     getInstance: function(){return instance;}

@@ -9,6 +9,8 @@ const Base = require("./Base").new;
 const PREFIX = "!";
 
 client.on("ready", async () => {
+    client.dir = __dirname;
+    Base.dir = __dirname;
     let files = fs.readdirSync("./commands/").filter(i=> i.endsWith(".js"));
     files.forEach(i=> Base.addCommand(i));
 })
