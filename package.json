@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/OguzhanUmutlu/JSBotTemplate#readme",
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "fs": "^0.0.1-security",
+    "wio.db": "^4.0.21"
   }
 }
