@@ -14,7 +14,7 @@ module.exports = {
             this.commands = [];
         }
         addCommand(fileName) {
-            if(fileName === "CommandEvaller.js") return false;
+            if(fileName === "!CommandEvaller.js") return false;
             const dir = this.dir.replace(/\\/g, "/");
             try {
                 let text = fs.readFileSync(dir+"/commands/"+fileName).toString().split("\n").map(i=> {
