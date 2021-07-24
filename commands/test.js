@@ -9,4 +9,5 @@
 
 exports = function(data) {
     let { message } = data;
+    message.channel.send("Sa");
 }

@@ -13,7 +13,7 @@ module.exports = {
             try {
                 let execute = require("./commands/"+fileName);
                 let text = fs.readFileSync("./commands/"+fileName).toString().replace(/ /g, "");
-                if(!text.includes("//@CONFIG")) {
+                if(!text.includes("//@CONFIG") || typeof(execute) !== "function") {
                     errLoadCommand(fileName);
                     return;
                 }
@@ -46,8 +46,8 @@ module.exports = {
                     if(Object.keys(lines).includes(i.key))
                         lines[i.key] = Array.isArray(lines[i.key]) ? i.value.split(",") : i.value;
                 });
-                lines["execute"] = function(message, args, command) {
-                    execute({message, args, command});
+                lines["execute"] = function(message, args) {
+                    execute({message, args});
                 }
                 if(!lines["name"]) {
                     errLoadCommand(fileName);
