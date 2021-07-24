@@ -3,9 +3,9 @@ let message;
 // @name test
 // @description Test komudu
 // @aliases test1,test2
-// @channelRequirement
+// @channelRequirement text
 // @permissions MANAGE_MESSAGES,MANAGE_GUILD
-// @idRequirement 460154149040947211
+// @idRequirement myId
 // @CONFIG END
 
-message.channel.send("Sa");
+message.channel.send("Hello world!");
