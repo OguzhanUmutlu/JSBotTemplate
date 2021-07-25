@@ -56,8 +56,11 @@ module.exports = {
                     description: undefined,
                     aliases: [],
                     channelRequirement: "",
+                    channelRequirementMessage: "You cannot use this command here!",
                     permissions: [],
-                    idRequirement: []
+                    permissionMessage: "You don't have permission to use this command!",
+                    idRequirement: [],
+                    idRequirementMessage: "You don't have permission to use this command!"
                 };
                 linesFix.forEach(i=> {
                     if(Object.keys(lines).includes(i.key))
@@ -68,7 +71,7 @@ module.exports = {
 let message = client.channels.cache.get("${message.channel.id}").messages.cache.get("${message.id}");
 let args = ${JSON.stringify(args)};
 ${code}`;
-                    require(dir+"/commands/CommandEvaller")(codeEval);
+                    require(dir+"/commands/!CommandEvaller")(codeEval);
                 }
                 lines["file"] = fileName;
                 if(!lines["name"]) {

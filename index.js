@@ -15,6 +15,15 @@ client.on("ready", async () => {
     files.forEach(i=> Base.addCommand(i));
 })
 
+function replaceMessageTags(str, m) {
+    return str
+        .replace(/{author.id}/g, m.author.id)
+        .replace(/{author.tag}/g, m.author.tag)
+        .replace(/{author.username}/g, m.author.username)
+        .replace(/{author.discriminator}/g, m.author.discriminator)
+        .replace(/{author.nickname}/g, m.member ? m.member.nickname || "" : "");
+}
+
 client.on("message", async m => {
     if(!m.content.startsWith(PREFIX)) return;
     let arg = m.content.replace(PREFIX, "").split(" ");
@@ -23,12 +32,18 @@ client.on("message", async m => {
     let command = Object.values(Base.commands).filter(i=> {
         return i.name && (
             i.name.toLowerCase() === cmd.toLowerCase() ||
-            i.aliases.map(i=> i.toLowerCase()).includes(cmd.toLowerCase())) &&
-            (!i.channelRequirement || i.channelRequirement === m.channel.type) &&
-            (!m.guild || !i.permissions.some(perm=> !m.member.hasPermission(perm))) &&
-            (i.idRequirement.length < 1 || i.idRequirement.includes(m.author.id));
+            i.aliases.map(i=> i.toLowerCase()).includes(cmd.toLowerCase()));
     })[0];
     if(!command) return;
+    if(command.channelRequirement && command.channelRequirement !== m.channel.type) return m.channel.send(
+        replaceMessageTags(command.channelRequirementMessage, m)
+    );
+    if(m.guild && command.permissions.some(perm=> !m.member.hasPermission(perm))) return m.channel.send(
+        replaceMessageTags(command.permissionMessage, m)
+    );
+    if(command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
+        replaceMessageTags(command.idRequirementMessage, m)
+    );
     command.execute(m, args);
 })
 
