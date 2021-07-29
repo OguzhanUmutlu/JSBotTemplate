@@ -1,7 +1,7 @@
 let instance = null;
 const fs = require("fs");
 function errLoadCommand(name, code) {
-    console.error("Cannot load " + name + "! Error code: " + code);
+    console.error("Cannot load " + name + "! Error code: #" + code);
 }
 module.exports = {
     new: new (class Base {
@@ -30,7 +30,7 @@ module.exports = {
                     return i;
                 }).join("\n");
                 if(!text.includes("//@CONFIG")) {
-                    errLoadCommand(fileName, 1);
+                    errLoadCommand(fileName, 4975);
                     return false;
                 }
                 let endLine;
@@ -39,7 +39,7 @@ module.exports = {
                         endLine = key;
                 });
                 if(endLine === undefined) {
-                    errLoadCommand(fileName, 2);
+                    errLoadCommand(fileName, 4754);
                     return false;
                 }
                 let code = text.split("\n").slice(endLine+1).join("\n");
@@ -75,18 +75,18 @@ ${code}`;
                 }
                 lines["file"] = fileName;
                 if(!lines["name"]) {
-                    errLoadCommand(fileName, 3);
+                    errLoadCommand(fileName, 7283);
                     return false;
                 }
                 if(this.commands[lines["name"]]) {
-                    errLoadCommand(fileName, 4);
+                    errLoadCommand(fileName, 4301);
                     return false;
                 }
                 this.commands[lines["name"]] = lines;
                 return true;
             } catch(e) {
                 console.error(e)
-                errLoadCommand(fileName, 5);
+                errLoadCommand(fileName, 8754);
             }
         }
         removeCommand(name) {

@@ -9,11 +9,12 @@ Discord.JS template
 
 # Error Codes
 
-- 1) No `@CONFIG` found
-- 2) No `@CONFIG END` found
-- 3) No `@name` found
-- 4) This command already exists
-- 5) Command internal error
+- \#4975: No `@CONFIG` found
+- \#4754: No `@CONFIG END` found
+- \#7283: No `@name` found
+- \#4301: This command already exists
+- \#8754: Command internal error
+- \#0458: Some command's permission is invalid.
 
 # Features
 
@@ -21,3 +22,5 @@ Discord.JS template
 - Easy command templates
 - Return statements!
 - Default load, unload and reload commands!
+- Error codes!
+- No bot crashes!
