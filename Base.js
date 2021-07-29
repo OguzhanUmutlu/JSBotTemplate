@@ -3,6 +3,7 @@ const fs = require("fs");
 function errLoadCommand(name, code) {
     console.error("Cannot load " + name + "! Error code: #" + code);
 }
+let listeners = {};
 module.exports = {
     new: new (class Base {
         constructor() {
@@ -93,5 +94,16 @@ ${code}`;
             delete this.commands[name];
         }
     })(),
-    getInstance: function(){return instance;}
+    getInstance() {
+        return instance;
+    },
+    on(event, callable){
+        if(!listeners[event]) listeners[event] = [];
+        listeners[event].push(callable);
+    },
+    emit(event, ...args) {
+        (listeners[event] || []).forEach(i=> {
+            i(...args);
+        });
+    }
 };
