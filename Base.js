@@ -3,6 +3,14 @@ const fs = require("fs");
 function errLoadCommand(name, code) {
     console.error("Cannot load " + name + "! Error code: #" + code);
 }
+function replaceMessageTags(str, m) {
+    return str
+        .replace(/{author.id}/g, m.author.id)
+        .replace(/{author.tag}/g, m.author.tag)
+        .replace(/{author.username}/g, m.author.username)
+        .replace(/{author.discriminator}/g, m.author.discriminator)
+        .replace(/{author.nickname}/g, m.member ? m.member.nickname || "" : "");
+}
 let listeners = {};
 module.exports = {
     new: new (class Base {
@@ -93,17 +101,41 @@ ${code}`;
         removeCommand(name) {
             delete this.commands[name];
         }
+        on(event = "", callable = function(){}){
+            if(!listeners[event]) listeners[event] = [];
+            listeners[event].push(callable);
+        }
+        emit(event, ...args) {
+            (listeners[event] || []).forEach(i=> {
+                i(...args);
+            });
+        }
+        handleMessage(m, prefix) {
+            if(!m.content.startsWith(prefix)) return;
+            let arg = m.content.replace(prefix, "").split(" ");
+            let cmd = arg[0];
+            let args = arg.slice(1);
+            let command = Object.values(this.commands).filter(i=> {
+                return i.name && (
+                    i.name.toLowerCase() === cmd.toLowerCase() ||
+                    i.aliases.map(i=> i.toLowerCase()).includes(cmd.toLowerCase()));
+            })[0];
+            if(!command) return;
+            if(command.channelRequirement && command.channelRequirement !== m.channel.type) return m.channel.send(
+                replaceMessageTags(command.channelRequirementMessage, m)
+            );
+            let permissions = ['SERVER_OWNER', 'CREATE_INSTANT_INVITE', 'KICK_MEMBERS', 'BAN_MEMBERS', 'ADMINISTRATOR', 'MANAGE_CHANNELS', 'MANAGE_GUILD', 'ADD_REACTIONS', 'VIEW_AUDIT_LOG', 'PRIORITY_SPEAKER', 'STREAM', 'VIEW_CHANNEL', 'SEND_MESSAGES', 'SEND_TTS_MESSAGES', 'MANAGE_MESSAGES', 'EMBED_LINKS', 'ATTACH_FILES', 'READ_MESSAGE_HISTORY', 'MENTION_EVERYONE', 'USE_EXTERNAL_EMOJIS', 'VIEW_GUILD_INSIGHTS', 'CONNECT', 'SPEAK', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'USE_VAD', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES', 'MANAGE_ROLES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS'];
+            if(m.guild && command.permissions.some(i=> !permissions.includes(i))) return message.reply("An error occurred. Error code: #0458");
+            if(m.guild && command.permissions.some(perm => perm === "SERVER_OWNER" ? m.guild.ownerID !== m.author.id : !m.member.hasPermission(perm))) return m.channel.send(
+                replaceMessageTags(command.permissionMessage, m)
+            );
+            if(command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
+                replaceMessageTags(command.idRequirementMessage, m)
+            );
+            command.execute(m, args);
+        }
     })(),
     getInstance() {
         return instance;
-    },
-    on(event, callable){
-        if(!listeners[event]) listeners[event] = [];
-        listeners[event].push(callable);
-    },
-    emit(event, ...args) {
-        (listeners[event] || []).forEach(i=> {
-            i(...args);
-        });
     }
 };
