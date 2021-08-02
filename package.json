@@ -10,7 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/OguzhanUmutlu/JSBotTemplate.git"
   },
-  "keywords": [],
+  "keywords": [
+    "javascript",
+    "js",
+    "node",
+    "npm",
+    "discord",
+    "discordjs"
+  ],
   "author": "OguzhanUmutlu",
   "license": "MIT",
   "bugs": {
@@ -20,7 +27,6 @@
   "dependencies": {
     "discord.js": "^12.5.3",
     "fs": "^0.0.1-security",
-    "request": "^2.88.2",
-    "wio.db": "^4.0.21"
+    "request": "^2.88.2"
   }
 }

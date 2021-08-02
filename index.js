@@ -1,11 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const fs = require("fs");
-const wio = require("wio.db");
 const request = require("request");
-const db = new wio.JsonDatabase({
-    databasePath: "data.json"
-});
 const Base = require("./Base").new;
 const settings = require("./settings.json");
 const PREFIX = settings.prefix;
