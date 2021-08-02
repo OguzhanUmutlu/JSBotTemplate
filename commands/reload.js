@@ -1,4 +1,5 @@
-let message;
+let Discord = require("discord.js");
+let message = new Discord.Message(new Discord.Client(), {}, new Discord.TextChannel(new Discord.Guild(new Discord.Client(), {}), {}));
 // @CONFIG
 // @name reload
 // @description This command reloads the codes in your commands to bot!

@@ -1,5 +1,6 @@
-let message;
-let args;
+let Discord = require("discord.js");
+let message = new Discord.Message(new Discord.Client(), {}, new Discord.TextChannel(new Discord.Guild(new Discord.Client(), {}), {}));
+let args = [""];
 // @CONFIG
 // @name load
 // @description This command loads the command for current session!
@@ -12,4 +13,4 @@ const Base = require("../Base").getInstance();
 if(!args[0]) return message.reply("You should enter command file to load!");
 
 if(!Base.addCommand(args[0])) return message.reply("An error occured.");
-message.reply("Command loaded!")
+await message.reply("Command loaded!")
