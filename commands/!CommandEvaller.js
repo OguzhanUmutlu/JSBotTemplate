@@ -1,8 +1,8 @@
 // DO NOT TOUCH OR DELETE THIS FILE
 
-module.exports=async function(code){eval(`
+module.exports=function(code){eval(`
     async function run() {
         ${code}
     }
-    return await run();
+    run().then(r => r);
 `);}
