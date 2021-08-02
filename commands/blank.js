@@ -4,4 +4,4 @@ let message = new Discord.Message(new Discord.Client(), {}, new Discord.TextChan
 // @name blankCommand
 // @CONFIG END
 
-message.channel.send("Hello its blank command everyone can use!");
+await message.channel.send("Hello its blank command everyone can use!");

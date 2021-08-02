@@ -12,4 +12,4 @@ let message = new Discord.Message(new Discord.Client(), {}, new Discord.TextChan
 // @idRequirementMessage You don't have permission to use this command!
 // @CONFIG END
 
-message.channel.send("Hello world!");
+await message.channel.send("Hello world!");

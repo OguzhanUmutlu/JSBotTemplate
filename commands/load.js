@@ -7,10 +7,9 @@ let args = [""];
 // @idRequirement 460154149040947211
 // @CONFIG END
 
-const fs = require("fs");
 const Base = require("../Base").getInstance();
 
 if(!args[0]) return message.reply("You should enter command file to load!");
 
-if(!Base.addCommand(args[0])) return message.reply("An error occured.");
-await message.reply("Command loaded!")
+if(!Base.addCommand(args[0])) return message.reply("An error occurred.");
+await message.reply("Command loaded!");

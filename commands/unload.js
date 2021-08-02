@@ -7,11 +7,10 @@ let args = [""];
 // @idRequirement 460154149040947211
 // @CONFIG END
 
-const fs = require("fs");
 const Base = require("../Base").getInstance();
 
 if(!args[0]) return message.reply("You should enter command name to unload!");
 if(!Base.commands[args[0]]) return message.reply("Command not found!");
 
 Base.removeCommand(args[0]);
-await message.reply("Command is unloaded!")
+await message.reply("Command is unloaded!");
