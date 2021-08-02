@@ -25,6 +25,7 @@ Discord.JS template
 - Error codes!
 - No bot crashes!
 - Custom events!
+- Async commands!
 
 # Custom Events
 

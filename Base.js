@@ -89,7 +89,7 @@ module.exports = {
                         lines[i.key] = Array.isArray(lines[i.key]) ? i.value.split(",") : i.value;
                 });
                 lines["execute"] = function(message, args) {
-                    let codeEval = `const Discord = require("discord.js");let client = require("${dir}/index").getClient();
+                    let codeEval = `const Base = require("${dir}/index").getBase();const Discord = require("discord.js");let client = require("${dir}/index").getClient();
 let message = client.channels.cache.get("${message.channel.id}").messages.cache.get("${message.id}");
 let args = ${JSON.stringify(args)};
 ${code}`;

@@ -1,0 +1,51 @@
+{
+  "1.0.0": {
+    "id": 0,
+    "code": 100,
+    "discord.js-version": 12,
+    "features": [
+      "Code without any effort",
+      "Easy command templates"
+    ]
+  },
+  "1.0.4": {
+    "id": 1,
+    "code": 104,
+    "discord.js-version": 12,
+    "features": [
+      "Code without any effort",
+      "Easy command templates",
+      "Return statements!",
+      "Default load, unload and reload commands!"
+    ],
+    "news": [
+      "Return statements!",
+      "Default load, unload and reload commands!"
+    ]
+  },
+  "1.3.0": {
+    "id": 2,
+    "code": 130,
+    "discord.js-version": 12,
+    "features": [
+      "Code without any effort",
+      "Easy command templates",
+      "Return statements!",
+      "Default load, unload and reload commands!",
+      "Error codes!",
+      "No bot crashes!",
+      "Custom events!",
+      "Async commands!",
+      "New IDE syntax supports!",
+      "Update reminder and changelog API!"
+    ],
+    "news": [
+      "Error codes!",
+      "No bot crashes!",
+      "Custom events!",
+      "Async commands!",
+      "New IDE syntax supports!",
+      "Update reminder and changelog API!"
+    ]
+  }
+}

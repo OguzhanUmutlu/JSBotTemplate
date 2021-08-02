@@ -25,3 +25,6 @@ client.login(fs.readFileSync("token.txt").toString()).then(r => r);
 module.exports.getClient = function getClient() {
     return client;
 }
+module.exports.getBase = function getBase() {
+    return Base;
+}
