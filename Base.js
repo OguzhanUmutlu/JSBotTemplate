@@ -12,6 +12,7 @@ function replaceMessageTags(str, m) {
         .replace(/{author.nickname}/g, m.member ? m.member.nickname || "" : "");
 }
 let listeners = {};
+let onceListeners = {};
 module.exports = {
     new: new (class Base {
         constructor() {
@@ -118,9 +119,17 @@ ${code}`;
             if(!listeners[event]) listeners[event] = [];
             listeners[event].push(callable);
         }
+        once(event = "", callable = function(){}){
+            if(!onceListeners[event]) onceListeners[event] = [];
+            onceListeners[event].push(callable);
+        }
         emit(event, ...args) {
             (listeners[event] || []).forEach(i=> {
                 i(...args);
+            });
+            (onceListeners[event] || []).forEach((i,j)=> {
+                i(...args);
+                delete onceListeners[j];
             });
         }
         handleMessage(m, prefix) {

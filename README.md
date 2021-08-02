@@ -50,6 +50,15 @@ Base.on("myEvent", (arg1, arg2) => {
 });
 ```
 
+### How to add listener to an event to happen once?
+
+- Example:
+```js
+Base.once("myEvent", (arg1, arg2) => {
+    console.log(arg1, arg2);
+});
+```
+
 ### What are the default events?
 
 All events' examples:
