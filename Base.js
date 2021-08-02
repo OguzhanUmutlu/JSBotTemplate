@@ -132,7 +132,16 @@ ${code}`;
             if(command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
                 replaceMessageTags(command.idRequirementMessage, m)
             );
-            command.execute(m, args);
+            try {
+                command.execute(m, args);
+            } catch(e) {
+                fs.writeFileSync("./errors/"+command.name+"-"+Date.now()+".xl",
+`Command: ${JSON.stringify(command)}\n
+Executor: ${m.author.tag}(${m.author.id})\n
+Message: ${m.content}\n
+Error: ${e}`);
+                console.log("An error occurred while executing "+command.name+", check error at: /errors/"+command.name+"-"+Date.now()+".xl");
+            }
         }
     })(),
     getInstance() {
