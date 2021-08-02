@@ -24,3 +24,56 @@ Discord.JS template
 - Default load, unload and reload commands!
 - Error codes!
 - No bot crashes!
+- Custom events!
+
+# Custom Events
+
+### What is event?
+
+- They can use events to do things when some thing happens.
+
+### How to create event?
+
+- Just simply use the code below this line and execute all added listeners to this event!
+
+```js
+Base.emit("myEvent", arg1, arg2);
+```
+
+### How to add listener to an event?
+
+- Example:
+```js
+Base.on("myEvent", (arg1, arg2) => {
+    console.log(arg1, arg2);
+});
+```
+
+### What are the default events?
+
+All events' examples:
+
+```js
+Base.on("commandExecute", async (command, message, args, cancel) => {
+    if(command.name === "bannedCommand") {
+        cancel.setCancelled();
+        message.reply("You cannot use this command!");
+    }
+    if(args.includes("bannedArgument")) {
+        cancel.setCancelled();
+        message.reply("An argument in your command is banned!");
+    }
+})
+```
+
+```js
+Base.on("commandError", async (command, message, args, error, file) => {
+    message.reply("An error occurred!");
+    if(message.author.id === "myId") {
+        message.channel.send("Saved to file: " + file + "\n" + error, {
+            code: "xl",
+            split: true
+        });
+    }
+})
+```

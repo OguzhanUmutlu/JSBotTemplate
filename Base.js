@@ -19,6 +19,19 @@ module.exports = {
             this.dir = "";
             instance = this;
         }
+        cancellableEvent() {
+            return new class {
+                constructor() {
+                    this.cancelled = false;
+                }
+                isCancelled() {
+                    return this.cancelled;
+                }
+                setCancelled(value = true) {
+                    this.cancelled = value;
+                }
+            }
+        }
         resetCommands() {
             this.commands = [];
         }
@@ -133,14 +146,19 @@ ${code}`;
                 replaceMessageTags(command.idRequirementMessage, m)
             );
             try {
-                command.execute(m, args);
+                let cancel = this.cancellableEvent();
+                this.emit("commandExecute", command, m, args, cancel);
+                if(!cancel.isCancelled())
+                    command.execute(m, args);
             } catch(e) {
-                fs.writeFileSync("./errors/"+command.name+"-"+Date.now()+".xl",
+                let file = "/errors/"+command.name+"-"+Date.now()+".xl";
+                fs.writeFileSync("." + file,
 `Command: ${JSON.stringify(command)}\n
 Executor: ${m.author.tag}(${m.author.id})\n
 Message: ${m.content}\n
 Error: ${e}`);
-                console.log("An error occurred while executing "+command.name+", check error at: /errors/"+command.name+"-"+Date.now()+".xl");
+                this.emit("commandError", command, m, args, e, file);
+                console.log("An error occurred while executing "+command.name+", check error at: " + file);
             }
         }
     })(),
