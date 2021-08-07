@@ -16,6 +16,7 @@ if(settings["update-reminder"]) {
                 const lastVersion = Object.values(CHANGELOG)[Object.values(CHANGELOG).length-1];
                 if(currentVersion.id < lastVersion.id) {
                     console.log("Template has been updated! You can download and check news in this release: " + lastVersion.release);
+                    console.log("New features: " + lastVersion.news.join("\n"));
                 } else console.log("You are using latest Template, congratulations!");
             }
         } catch (e) {

@@ -50,5 +50,27 @@
       "New IDE syntax supports!",
       "Update reminder and changelog API!"
     ]
+  },
+  "1.3.2": {
+    "id": 3,
+    "code": 132,
+    "release": "https://github.com/OguzhanUmutlu/JSBotTemplate/releases/tag/1.3.2",
+    "discord.js-version": 12,
+    "features": [
+      "Code without any effort",
+      "Easy command templates",
+      "Return statements!",
+      "Default load, unload and reload commands!",
+      "Error codes!",
+      "No bot crashes!",
+      "Custom events!",
+      "Async commands!",
+      "New IDE syntax supports!",
+      "Update reminder and changelog API!",
+      "Cooldowns!"
+    ],
+    "news": [
+      "Cooldowns!"
+    ]
   }
 }

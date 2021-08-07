@@ -11,6 +11,7 @@ function replaceMessageTags(str, m) {
         .replace(/{author.discriminator}/g, m.author.discriminator)
         .replace(/{author.nickname}/g, m.member ? m.member.nickname || "" : "");
 }
+let cooldowns = {};
 let listeners = {};
 let onceListeners = {};
 module.exports = {
@@ -83,7 +84,9 @@ module.exports = {
                     permissions: [],
                     permissionMessage: "You don't have permission to use this command!",
                     idRequirement: [],
-                    idRequirementMessage: "You don't have permission to use this command!"
+                    idRequirementMessage: "You don't have permission to use this command!",
+                    cooldown: 0,
+                    cooldownMessage: "Please wait %0 seconds to use this command again!"
                 };
                 linesFix.forEach(i=> {
                     if(Object.keys(lines).includes(i.key))
@@ -129,7 +132,7 @@ ${code}`;
             });
             (onceListeners[event] || []).forEach((i,j)=> {
                 i(...args);
-                delete onceListeners[j];
+                delete onceListeners[event][j];
             });
         }
         handleMessage(m, prefix) {
@@ -154,6 +157,15 @@ ${code}`;
             if(command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
                 replaceMessageTags(command.idRequirementMessage, m)
             );
+            if(command.cooldown > 0) {
+                if(!cooldowns[command.name])
+                    cooldowns[command.name] = {};
+                if((cooldowns[command.name][m.author.id] || 0) > Date.now()) return m.channel.send(
+                    replaceMessageTags(command.cooldownMessage, m)
+                        .replace(/%0/g, Math.floor((cooldowns[command.name][m.author.id]-Date.now())/1000))
+                );
+                cooldowns[command.name][m.author.id] = Date.now()+(command.cooldown*1000);
+            }
             try {
                 let cancel = this.cancellableEvent();
                 this.emit("commandExecute", command, m, args, cancel);
