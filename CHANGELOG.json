@@ -72,5 +72,29 @@
     "news": [
       "Cooldowns!"
     ]
+  },
+  "1.3.3": {
+    "id": 4,
+    "code": 133,
+    "release": "https://github.com/OguzhanUmutlu/JSBotTemplate/releases/tag/1.3.3",
+    "discord.js-version": 12,
+    "features": [
+      "Code without any effort",
+      "Easy command templates",
+      "Return statements!",
+      "Default load, unload and reload commands!",
+      "Error codes!",
+      "No bot crashes!",
+      "Custom events!",
+      "Async commands!",
+      "New IDE syntax supports!",
+      "Update reminder and changelog API!",
+      "Cooldowns!",
+      "New config compiler!"
+    ],
+    "news": [
+      "Cooldowns!",
+      "New config compiler!"
+    ]
   }
 }
