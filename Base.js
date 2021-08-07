@@ -24,7 +24,7 @@ module.exports = {
         cancellableEvent() {
             return new class {
                 constructor() {
-                    this.cancelled = false;
+                    this.setCancelled(false);
                 }
                 isCancelled() {
                     return this.cancelled;
@@ -41,40 +41,51 @@ module.exports = {
             if(fileName === "!CommandEvaller.js") return false;
             const dir = this.dir.replace(/\\/g, "/");
             try {
-                let text = fs.readFileSync(dir+"/commands/"+fileName).toString().split("\n").map(i=> {
-                    if(!i.startsWith("// ")) return i;
-                    let end = null;
-                    for(let a=0;a<i.length;a++) {
-                        if(!end && a > 1) {
-                            if(i.split("")[a] !== " ")
-                                end = a;
-                            else i = i.replace(" ", "");
-                        }
-                    }
-                    return i;
-                }).join("\n");
-                if(!text.includes("//@CONFIG")) {
+                let text = fs.readFileSync(dir+"/commands/"+fileName).toString();
+                let res = text.split("\n").map(i=> i.replace(/\r/g, "")).filter(i=> i.includes("//")).map(i=> {
+                    let index = -1;
+                    for(let j=0;j<i.length;j++)
+                        if(i.charAt(j) === "/" && i.charAt(j+1) === "/" && index === -1)
+                            index = j;
+                    return index === -1 ? null : i.split("").slice(index+2).join("");
+                }).filter(i=> i);
+                res = res.map(i=> {
+                    let index = -1;
+                    for(let j=0;j<i.length;j++)
+                        if(i.charAt(j) !== " " && index === -1)
+                            index = j;
+                    return index === -1 ? i : i.split("").slice(index).join("");
+                }).filter(i=> i);
+                let start = Object.keys(res).filter(k=> res[k].replace(/ /g, "") === "@CONFIG")[0]*1;
+                if(!start && start !== 0) {
                     errLoadCommand(fileName, 4975);
                     return false;
                 }
-                let endLine;
-                text.split("\n").forEach((val, key) => {
-                    if(val === "//@CONFIG END\r")
-                        endLine = key;
-                });
-                if(endLine === undefined) {
+                let end = Object.keys(res).filter(k=> res[k].replace(/ /g, "") === "@CONFIGEND")[0]*1;
+                if(!end && end !== 0) {
                     errLoadCommand(fileName, 4754);
                     return false;
                 }
-                let code = text.split("\n").slice(endLine+1).join("\n");
-                text = text.split("\n").slice(0, endLine);
-                let linesFix = text.filter(i=> i.startsWith("//")).map(i=> {
-                    let a = i.replace("//", "").split(" ");
+                res = res.slice(start+1, end);
+                res = res.filter(i=> i.includes("@")).map(i=> {
+                    let index = -1;
+                    for(let j=0;j<i.length;j++)
+                        if(i.charAt(j) === "@" && index === -1)
+                            index = j;
+                    return index === -1 ? null : i.split("").slice(index+1).join("");
+                }).filter(i=> i);
+                res = res.filter(i=> i.includes(" ")).map(i=> {
                     return {
-                        key: a[0].replace("@", ""),
-                        value: a[1] ? a.slice(1).join(" ").replace(/\r/g, "") : undefined
+                        key: i.split(" ")[0],
+                        value: i.split(" ").slice(1).join(" ")
                     };
                 });
+                let actualEnd = Object.keys(text.split("\n")).filter(k=> text.split("\n")[k].replace(/ /g, "").replace(/\r/g, "") === "//@CONFIGEND")[0]*1;
+                if(!actualEnd && actualEnd !== 0) {
+                    errLoadCommand(fileName, 4754);
+                    return false;
+                }
+                let code = text.split("\n").slice(actualEnd).join("\n");
                 let lines = {
                     name: undefined,
                     description: undefined,
@@ -88,7 +99,7 @@ module.exports = {
                     cooldown: 0,
                     cooldownMessage: "Please wait %0 seconds to use this command again!"
                 };
-                linesFix.forEach(i=> {
+                res.forEach(i=> {
                     if(Object.keys(lines).includes(i.key))
                         lines[i.key] = Array.isArray(lines[i.key]) ? i.value.split(",") : i.value;
                 });

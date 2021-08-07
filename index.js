@@ -5,6 +5,7 @@ const request = require("request");
 const Base = require("./Base").new;
 const settings = require("./settings.json");
 const PREFIX = settings.prefix;
+
 if(settings["update-reminder"]) {
     request("https://raw.githubusercontent.com/OguzhanUmutlu/JSBotTemplate/main/CHANGELOG.json", {method: "GET"}, function (error, response) {
         try {
@@ -30,8 +31,6 @@ client.on("ready", async () => {
     let files = fs.readdirSync("./commands/").filter(i=> i.endsWith(".js"));
     files.forEach(i=> Base.addCommand(i));
 })
-
-
 
 client.on("message", async m => {
     Base.handleMessage(m, PREFIX);
