@@ -26,6 +26,9 @@ Discord.JS template
 - No bot crashes!
 - Custom events!
 - Async commands!
+- New IDE syntax supports!
+- Update reminder and changelog API!
+- Cooldowns!
 
 # Custom Events
 
