@@ -29,6 +29,7 @@ Discord.JS template
 - New IDE syntax supports!
 - Update reminder and changelog API!
 - Cooldowns!
+- New config compiler!
 
 # Custom Events
 
