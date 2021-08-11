@@ -61,7 +61,7 @@ module.exports = {
                     errLoadCommand(fileName, 4975);
                     return false;
                 }
-                let end = Object.keys(res).filter(k=> res[k].replace(/ /g, "") === "@CONFIGEND")[0]*1;
+                let end = Object.keys(res).filter(k=> res[k].replace(/ /g, "") === "@CONFIG"+"END")[0]*1;
                 if(!end && end !== 0) {
                     errLoadCommand(fileName, 4754);
                     return false;
@@ -80,7 +80,7 @@ module.exports = {
                         value: i.split(" ").slice(1).join(" ")
                     };
                 });
-                let actualEnd = Object.keys(text.split("\n")).filter(k=> text.split("\n")[k].replace(/ /g, "").replace(/\r/g, "") === "//@CONFIGEND")[0]*1;
+                let actualEnd = Object.keys(text.split("\n")).filter(k=> text.split("\n")[k].replace(/ /g, "").replace(/\r/g, "") === "//@CONFIG"+"END")[0]*1;
                 if(!actualEnd && actualEnd !== 0) {
                     errLoadCommand(fileName, 4754);
                     return false;
