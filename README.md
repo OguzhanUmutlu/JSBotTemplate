@@ -16,6 +16,11 @@ Discord.JS template
 - \#8754: Command internal error
 - \#0458: Some command's permission is invalid.
 
+# Todos
+
+- https://tinyurl.com/ExampleErrors fix these
+- Functions.js to use them in commands and command permission messages etc.
+
 # Features
 
 - Code without any effort
