@@ -5,7 +5,7 @@ const Base = require("../Base").getInstance();
 // @CONFIG
 // @name load
 // @description This command loads the command for current session!
-// @idRequirement 460154149040947211
+// @botOwnerRequirement true
 // @CONFIG END
 
 if(!args[0]) return message.reply("You should enter command file to load!");

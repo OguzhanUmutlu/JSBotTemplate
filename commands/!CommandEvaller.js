@@ -1,10 +1,13 @@
 // DO NOT TOUCH OR DELETE THIS FILE
 
-module.exports = function (code) {
-    eval(`
-        async function run() {
-            ${code}
-        }
-        run().then(r => r);
+module.exports = async function (code) {
+    return await eval(`
+        (async () => {
+            try {
+                ${code};
+            } catch (e) {
+                return new Error(require("util").inspect(e));
+            }
+        })();
     `);
 }

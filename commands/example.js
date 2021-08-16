@@ -12,6 +12,8 @@ let message = new Discord.Message(new Discord.Client(), {}, new Discord.TextChan
 // @idRequirementMessage You don't have permission to use this command!
 // @cooldown 10
 // @cooldownMessage Please wait %0 seconds to use this command again!
+// @botOwnerRequirement true
+// @botOwnerRequirementMessage You don't have permission to use this command!
 // @CONFIG END
 
 await message.channel.send("Hello world!");

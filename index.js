@@ -3,7 +3,12 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const fs = require("fs");
 const request = require("request");
+let OWNER_ID = null;
+module.exports.getOwnerId = function getOwnerId() {
+    return OWNER_ID;
+}
 const Base = require("./Base").new;
+const Utils = require("./utils/Utils");
 const settings = require("./settings.json");
 const PREFIX = settings.prefix;
 
@@ -27,45 +32,17 @@ if(settings["update-reminder"]) {
     });
 }
 
-module.exports.generateEmbed = (options = {}) => {
-    const embed = new Discord.MessageEmbed();
-    if(options.author)
-        embed.setAuthor(options.author.name, options.author.iconURL,options.author.url);
-    if(options.title)
-        embed.setTitle(options.title);
-    if(options.color) {
-        embed.setColor(options.color);
-    } else embed.setColor("RANDOM");
-    if(options.image)
-        embed.setImage(options.image);
-    if(options.url)
-        embed.setURL(options.url);
-    if(options.description)
-        embed.setDescription(options.description);
-    if(typeof(options.footer) == "string") {
-        embed.setFooter(options.footer);
-    } else if(typeof(options.footer) == "object")
-        embed.setFooter(options.footer.text, options.footer.icon);
-    if(options.thumbnail)
-        embed.setThumbnail(options.thumbnail);
-    if(options.timestamp)
-        embed.setTimestamp(options.timestamp);
-    (options["fields"] || []).forEach(field => {
-        embed.addField(field.title,field.text,field.inline);
-    });
-    return embed;
-}
-
-client.on("ready", async () => {
+client.once("ready", async () => {
     client.dir = __dirname;
     Base.dir = __dirname;
     let files = fs.readdirSync("./commands/").filter(i=> i.endsWith(".js"));
     files.forEach(i=> Base.addCommand(i));
-})
+    OWNER_ID = (await client.fetchApplication()).owner.id;
+});
 
 client.on("message", async m => {
-    Base.handleMessage(m, PREFIX);
-})
+    await Base.handleMessage(m, PREFIX);
+});
 
 client.login(fs.readFileSync("token.txt").toString()).then(r => r);
 
@@ -74,4 +51,7 @@ module.exports.getClient = function getClient() {
 }
 module.exports.getBase = function getBase() {
     return Base;
+}
+module.exports.getUtils = function getUtils() {
+    return Utils;
 }

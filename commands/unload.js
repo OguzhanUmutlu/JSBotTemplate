@@ -5,7 +5,7 @@ const Base = require("../Base").getInstance();
 // @CONFIG
 // @name unload
 // @description This command unloads the command for current session!
-// @idRequirement 460154149040947211
+// @botOwnerRequirement true
 // @CONFIG END
 
 if(!args[0]) return message.reply("You should enter command name to unload!");

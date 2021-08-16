@@ -1,5 +1,6 @@
 let instance = null;
 const fs = require("fs");
+const {getOwnerId} = require("./index");
 function errLoadCommand(name, code) {
     console.error("Cannot load " + name + "! Error code: #" + code);
 }
@@ -97,7 +98,9 @@ module.exports = {
                     idRequirement: [],
                     idRequirementMessage: "You don't have permission to use this command!",
                     cooldown: 0,
-                    cooldownMessage: "Please wait %0 seconds to use this command again!"
+                    cooldownMessage: "Please wait %0 seconds to use this command again!",
+                    botOwnerRequirement: "false",
+                    botOwnerRequirementMessage: "You don't have permission to use this command!"
                 };
                 res.forEach(i=> {
                     if(Object.keys(lines).includes(i.key))
@@ -108,7 +111,7 @@ module.exports = {
 let message = client.channels.cache.get("${message.channel.id}").messages.cache.get("${message.id}");
 let args = ${JSON.stringify(args)};
 ${code}`;
-                    require(dir+"/commands/!CommandEvaller")(codeEval);
+                    return require(dir+"/commands/!CommandEvaller")(codeEval);
                 }
                 lines["file"] = fileName;
                 if(!lines["name"]) {
@@ -146,51 +149,54 @@ ${code}`;
                 delete onceListeners[event][j];
             });
         }
-        handleMessage(m, prefix) {
-            if(!m.content.startsWith(prefix)) return;
+        async handleMessage(m, prefix) {
+            if (!m.content.startsWith(prefix)) return;
             let arg = m.content.replace(prefix, "").split(" ");
             let cmd = arg[0];
             let args = arg.slice(1);
-            let command = Object.values(this.commands).filter(i=> {
+            let command = Object.values(this.commands).filter(i => {
                 return i.name && (
                     i.name.toLowerCase() === cmd.toLowerCase() ||
-                    i.aliases.map(i=> i.toLowerCase()).includes(cmd.toLowerCase()));
+                    i.aliases.map(i => i.toLowerCase()).includes(cmd.toLowerCase()));
             })[0];
-            if(!command) return;
-            if(command.channelRequirement && command.channelRequirement !== m.channel.type) return m.channel.send(
+            if (!command) return;
+            if (command.channelRequirement && command.channelRequirement !== m.channel.type) return m.channel.send(
                 replaceMessageTags(command.channelRequirementMessage, m)
             );
             let permissions = ['SERVER_OWNER', 'CREATE_INSTANT_INVITE', 'KICK_MEMBERS', 'BAN_MEMBERS', 'ADMINISTRATOR', 'MANAGE_CHANNELS', 'MANAGE_GUILD', 'ADD_REACTIONS', 'VIEW_AUDIT_LOG', 'PRIORITY_SPEAKER', 'STREAM', 'VIEW_CHANNEL', 'SEND_MESSAGES', 'SEND_TTS_MESSAGES', 'MANAGE_MESSAGES', 'EMBED_LINKS', 'ATTACH_FILES', 'READ_MESSAGE_HISTORY', 'MENTION_EVERYONE', 'USE_EXTERNAL_EMOJIS', 'VIEW_GUILD_INSIGHTS', 'CONNECT', 'SPEAK', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'USE_VAD', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES', 'MANAGE_ROLES', 'MANAGE_WEBHOOKS', 'MANAGE_EMOJIS'];
-            if(m.guild && command.permissions.some(i=> !permissions.includes(i))) return m.reply("An error occurred. Error code: #0458");
-            if(m.guild && command.permissions.some(perm => perm === "SERVER_OWNER" ? m.guild.ownerID !== m.author.id : !m.member.hasPermission(perm))) return m.channel.send(
+            if (m.guild && command.permissions.some(i => !permissions.includes(i))) return m.reply("An error occurred. Error code: #0458");
+            if (m.guild && command.permissions.some(perm => perm === "SERVER_OWNER" ? m.guild.ownerID !== m.author.id : !m.member.hasPermission(perm))) return m.channel.send(
                 replaceMessageTags(command.permissionMessage, m)
             );
-            if(command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
+            if (command.idRequirement.length > 0 && !command.idRequirement.includes(m.author.id)) return m.channel.send(
                 replaceMessageTags(command.idRequirementMessage, m)
             );
-            if(command.cooldown > 0) {
-                if(!cooldowns[command.name])
+            if (command.cooldown > 0) {
+                if (!cooldowns[command.name])
                     cooldowns[command.name] = {};
-                if((cooldowns[command.name][m.author.id] || 0) > Date.now()) return m.channel.send(
+                if ((cooldowns[command.name][m.author.id] || 0) > Date.now()) return m.channel.send(
                     replaceMessageTags(command.cooldownMessage, m)
-                        .replace(/%0/g, Math.floor((cooldowns[command.name][m.author.id]-Date.now())/1000))
+                        .replace(/%0/g, Math.floor((cooldowns[command.name][m.author.id] - Date.now()) / 1000))
                 );
-                cooldowns[command.name][m.author.id] = Date.now()+(command.cooldown*1000);
+                cooldowns[command.name][m.author.id] = Date.now() + (command.cooldown * 1000);
             }
-            try {
-                let cancel = this.cancellableEvent();
-                this.emit("commandExecute", command, m, args, cancel);
-                if(!cancel.isCancelled())
-                    command.execute(m, args);
-            } catch(e) {
-                let file = "/errors/"+command.name+"-"+Date.now()+".xl";
-                fs.writeFileSync("." + file,
-`Command: ${JSON.stringify(command)}\n
+            if (command.botOwnerRequirement === "true" && m.author.id !== getOwnerId()) return m.channel.send(
+                replaceMessageTags(command.botOwnerRequirementMessage, m)
+            );
+            let cancel = this.cancellableEvent();
+            this.emit("commandExecute", command, m, args, cancel);
+            if (!cancel.isCancelled()) {
+                let error = await command.execute(m, args);
+                if (error instanceof Error) {
+                    let file = "/errors/" + command.name + "-" + Date.now() + ".xl";
+                    fs.writeFileSync("." + file,
+                        `Command: ${JSON.stringify(command)}\n
 Executor: ${m.author.tag}(${m.author.id})\n
 Message: ${m.content}\n
-Error: ${e}`);
-                this.emit("commandError", command, m, args, e, file);
-                console.log("An error occurred while executing "+command.name+", check error at: " + file);
+Error: ${require("util").inspect(error)}`);
+                    this.emit("commandError", command, m, args, error, file);
+                    console.log("An error occurred while executing " + command.name + ", check error at: " + file);
+                }
             }
         }
     })(),

@@ -4,7 +4,7 @@ const Base = require("../Base").getInstance();
 // @CONFIG
 // @name reload
 // @description This command reloads the codes in your commands to bot!
-// @idRequirement 460154149040947211
+// @botOwnerRequirement true
 // @CONFIG END
 
 const fs = require("fs");
