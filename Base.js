@@ -196,6 +196,7 @@ Message: ${m.content}\n
 Error: ${require("util").inspect(error)}`);
                     this.emit("commandError", command, m, args, error, file);
                     console.log("An error occurred while executing " + command.name + ", check error at: " + file);
+                    m.reply("Internal Bot Error");
                 }
             }
         }
