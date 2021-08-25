@@ -35,6 +35,7 @@ Discord.JS template
 - Update reminder and changelog API!
 - Cooldowns!
 - New config compiler!
+- New bot owner requirement.
 
 # Custom Events
 
