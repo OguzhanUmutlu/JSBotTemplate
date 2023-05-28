@@ -1,6 +1,8 @@
 # JSBotTemplate
 Discord.JS template
 
+[![](https://img.shields.io/badge/Discord-black?style=for-the-badge&logo=discord)](https://discord.gg/emAhrw3mvM)
+
 # Usage
 
 - Create token.txt and fill with your bot's token!
